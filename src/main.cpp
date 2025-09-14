@@ -1,7 +1,7 @@
 #include "mbed.h"
 #include "BNO055Uart.hpp"
 
-static UnbufferedSerial pc(USBTX, USBRX, 115200);
+BufferedSerial pc(USBTX, USBRX, 115200);
 BNO055Uart imu(PA_9, PA_10);
 float yaw_offset = 0.0f;
 
@@ -21,7 +21,8 @@ int main() {
     while (1) {
         if (imu.update()) {
             BNO055Uart::EulerAngles angles = imu.getEuler();
-            float relative_yaw = angles.yaw - yaw_offset;
+            float relative_yaw = angles.yaw - yaw_offset; // ヨー角をoffset修正
+
             // 角度を-180～180度に
             if (relative_yaw > 180.0f) relative_yaw -= 360.0f;
             if (relative_yaw < -180.0f) relative_yaw += 360.0f;
